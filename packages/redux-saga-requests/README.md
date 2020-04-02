@@ -16,9 +16,9 @@ integrations could be added, as they are implemented in a plugin fashion.
 
 ## Table of content
 
-- [Motivation](#motivation-arrow_up)
-- [Installation](#installation-arrow_up)
-- [Usage](#usage-arrow_up)
+- [동기](#motivation-arrow_up)
+- [설치](#installation-arrow_up)
+- [사용](#usage-arrow_up)
 - [Actions](#actions-arrow_up)
 - [Selectors](#selectors-arrow_up)
 - [Reducers](#reducers-arrow_up)
@@ -33,7 +33,7 @@ integrations could be added, as they are implemented in a plugin fashion.
 - [Multiple drivers](#multiple-drivers-arrow_up)
 - [Normalisation](#normalisation-arrow_up)
 - [React bindings](#react-bindings-arrow_up)
-- [Examples](#examples-arrow_up)
+- [예시](#examples-arrow_up)
 
 ## Motivation [:arrow_up:](#table-of-content)
 
@@ -115,39 +115,32 @@ With `redux-saga-requests`, assuming you use `axios` you could refactor a code i
     return store;
   };
 ```
-With `redux-saga-requests`, you no longer need to define error and success actions to do things like error handling
-or showing loading spinners. You don't need to write requests related repetitive sagas and reducers either.
-You don't even need to worry about writing selectors, as this library provides optimized selectors out of the box.
-With action helper library like `redux-actions`, you don't even need to write constants!
+`redux-saga-requests`를 사용하면, 더 이상 오류 처리 또는로드 스피너 표시와 같은 작업을 수행하기 위해 오류 및 성공 작업을 정의 할 필요가 없습니다. 
+반복적 인 사가 및 감속기와 관련된 요청을 작성할 필요도 없습니다. selector 작성에 대해 걱정할 필요조차 없습니다, 이 라이브러리는 최적화 된 선택기를 즉시 제공하므로.
+`redux-actions` 같은 액션 헬퍼 라이브러리를 쓰면, 상수를 쓸 필요조차 없습니다.!
 So basically you end up writing just actions to manage your whole remote state, so no more famous boilerplate in your Redux apps!
 
-Here you can see the list of features this library provides:
-- you define your AJAX requests as simple actions, like `{ type: FETCH_BOOKS, request: { url: '/books' } }` and `success`,
-`error` (`abort` is also supported, see below) actions will be dispatched automatically for you
-- `success`, `error` and `abort` functions, which add correct and consistent suffixes to your request action types, so you can easily
-react on response actions in your reducers/sagas/middleware
-- `handleRequests` function, which gives you all the pieces needed for this library to work
-- automatic and configurable requests aborts, which increases performance and prevents race condition bugs before they even happen
-- sending multiple requests in one action - `{ type: FETCH_BOOKS_AND_AUTHORS, request: [{ url: '/books' }, { url: '/authors}'] }`
-will send two requests and wrap them in `Promise.all`
-- declarative programming - the idea of this library is to encapsulate all requests logic inside actions, so no more scattered logic
-between actions, reducers, sagas and middlewares
-- support for Axios, Fetch API and GraphQL - additional clients could be added, allowed to use any of them
-within one app, you could even write your own client integration as a `driver` (see [./packages/redux-saga-requests-axios/src/axios-driver.js](https://github.com/klis87/redux-saga-requests/blob/master/packages/redux-saga-requests-axios/src/axios-driver.js)
+여기에서이 라이브러리가 제공하는 기능 목록을 볼 수 있습니다:
+- AJAX 요청을 `{ type: FETCH_BOOKS, request: { url: '/books' } }` 와 같이 간단한 액션으로 정의 가능, 그리고 `success`, `error` (`abort` 또한 지원됩니다, 아래를 참조하십시오) 액션은 자동으로 디스패치 됩니다
+- `success`, `error`, `abort` 함수는, 요청 작업 유형에 정확하고 일관된 접미사를 추가하므로 리듀서/사가/미들웨어의 응답 작업에 쉽게 대응할 수 있습니다.
+- `handleRequests` 함수는, 이 라이브러리가 작동하는 데 필요한 모든 것을 제공합니다.
+- 자동 및 구성 가능한 요청 abort, 성능을 높이고 경쟁 조건 버그가 발생하기도 전에 방지합니다.
+- 한 번의 작업으로 여러 요청 보내기 - `{ type: FETCH_BOOKS_AND_AUTHORS, request: [{ url: '/books' }, { url: '/authors}'] }`
+두 개의 요청을 보내고 `Promise.all` 로 감쌀 것입니다.
+- 선언적 프로그래밍 - 이 라이브러리의 아이디어는 모든 요청 논리를 조치 내부에 캡슐화하는 것입니다, 따라서 액션, 리듀서, 사가 및 미들웨어 사이에 더 이상 흩어진 로직이 없습니다.
+- Axios, Fetch API 및 GraphQL 지원 - 추가 고객을 추가 할 수 있습니다,하나의 앱 내에서 모두 사용할 수 있습니다, 자신의 클라이언트 통합을 `드라이버`로 작성할 수도 있습니다. (see [./packages/redux-saga-requests-axios/src/axios-driver.js](https://github.com/klis87/redux-saga-requests/blob/master/packages/redux-saga-requests-axios/src/axios-driver.js)
 for the example)
-- optimistic updates support, so your views can be updated even before requests are finished, while you still keep consistency in case of errors by reverting optimistic updates
-- cache support with TTL, so that you can avoid making repetitive requests for a data which does not require to be always fetched
-from your server
-- mocking - mock driver, which use can use for test purposes or when you would like to integrate with API not yet implemented (and once API is finished, you could just change driver to Axios or Fetch and magicaly everything will work!)
-- multiple driver support - for example you can use Axios for one part of your requests and Fetch Api for another part
-- compatible with FSA, `redux-act` and `redux-actions` libraries (see [redux-act example](https://github.com/klis87/redux-saga-requests/tree/master/examples/redux-act-integration))
-- simple to use with server side rendering - just pass one extra option to `handleRequests` and your app will be ready for SSR!
-- `onRequest`, `onSuccess`, `onError` and `onAbort` interceptors, you can attach your sagas (or simple functions)
-to them to define a global behaviour for a given event type
-- optional `requestsPromiseMiddleware`, which promisifies requests actions dispatch, so you can wait in your react components to get request response, the same way like you can do this with `redux-thunk`
-- highly optimized selectors to retrieve your remote state
-- automatic (but optional) data normalisation, so you can forget about manual data updates, just like in graphql world but available universally!
-- React bindings in `redux-saga-requests-react` package
+- optimistic updates 지원, 따라서 요청이 완료되기 전에도 뷰를 업데이트 할 수 있습니다, optimistic updates를 되돌려 오류가 발생하더라도 일관성을 유지합니다.
+- TTL을 통한 캐시 지원, 항상 서버에서 가져올 필요가없는 데이터에 대한 반복적 인 요청을 피할 수 있습니다.
+- mocking -테스트 목적으로 또는 아직 구현되지 않은 API와 통합하려는 경우 사용할 수있는 모의 드라이버 (API가 완료되면 드라이버를 Axios 또는 Fetch로 변경하면 모든 것이 작동합니다.!)
+- 여러 드라이버 지원 - 예를 들어 요청의 한 부분에는 Axios를 사용하고 다른 부분에는 Fetch Api를 사용할 수 있습니다
+- compatible with FSA, `redux-act` 와 `redux-actions` 라이브러리 (see [redux-act example](https://github.com/klis87/redux-saga-requests/tree/master/examples/redux-act-integration))
+- 서버 측 렌더링과 함께 사용하기 간단 - 하나의 추가 옵션을`handleRequests '에 전달하면 앱이 SSR을 준비합니다!
+- `onRequest`, `onSuccess`, `onError`, `onAbort` 인터셉터, 당신은 주어진 이벤트 타입을 위핸 전역 행위를 정의하기 위해 당신의 sagas(또는 간단한 함수)를 그들에게 부착 할 수 있습니다 
+- 선택적인 `requestsPromiseMiddleware`, 요청 액션 디스패치를 프로미스화 시킵니다, 따라서 리액트 컴포넌트에서 기다렸다가 요청 응답을 얻을 수 있습니다. `redux-thunk`로 하는 것과 같은 방법으로
+- 원격 상태를 검색하는 고도로 최적화 된 셀렉터
+- 자동 (그러나 선택적인) 데이터 정규화, 수동 데이터 업데이트를 잊을 수 있습니다, graphql 세계에서와 마찬가지로 보편적으로 사용 가능!
+- `redux-saga-requests-react` 패키지의 리액트 바인딩
 
 ## Installation [:arrow_up:](#table-of-content)
 
@@ -180,50 +173,42 @@ For a quick introduction how things work, see [Motivation](#motivation-arrow_up)
 
 Before we go further, let's start with some naming conventions explanation and ideas behind this library.
 
-As you probably noticed in `Motivation` section, one of the used pieces are actions with `request` key.
-Let's call them request actions from now. If such an action is dispatched, it will cause an AJAX request
-to be fired automatically. Then, depending on the outcome, either corresponding success, error, or abort action will
-be dispatched. In the next paragraphs there will be more information about request actions, but for now
-know, that request actions are powered by so called drivers. You set drivers in `handleRequest` function. There are
-officially supported Axios, Fetch API, GraphQL and mock drivers, but it is very easy to write your own driver.
+As you probably noticed in `Motivation` section, 사용 된 내용 일부 중 하나는 '요청'키가있는 동작입니다..
+지금부터 요청을 액션이라합니다. 이러한 액션이 전달되면 AJAX 요청이 자동으로 시작됩니다. 그런 다음 결과에 따라 해당 성공, 오류 또는 중단 조치가 발송됩니다.
+다음 단락에서는 요청 조치에 대한 자세한 정보가 있습니다., but for now know, 그 요청 동작은 드라이버라고 불리는 것에 의해 구동됩니다. 
+당신은 `handleRequest` 기능에서 드라이버를 설정했습니다. 공식적으로 지원되는 Axios, Fetch API, GraphQL 및 모의 드라이버가 있습니다, 그러나 자신의 드라이버를 작성하는 것은 매우 쉽습니다.
 Just pick whatever you prefer. The key to understand is that if you know how to use Fetch API,
-you know how to use Fetch API driver. A config object you would pass to `fetch` function,
-now you attach to `request` key inside a request action. Another information which will
-be explained later is that you can use `meta` key next to `request`, which is the way to pass some additional options.
+you know how to use Fetch API driver. `fetch` 함수에 전달할 설정 객체가 있다면,
+이제 요청 액션의 `request` 키에 첨부합니다. Another information which will be explained later is that you can use `meta` key next to `request`, which is the way to pass some additional options.
 One of examples can be `meta.driver` option, which allows you to define driver per request action, that's it,
-you can use multiple drivers within one application. It will be described later, for now let's focus on core concepts.
+you can use multiple drivers within one application. It will be described later, 지금은 핵심 개념에 집중하자.
 
-Another important thing is that we can divide `requests` into `queries` and `mutations`.
-This is just a naming convention used in this library, borrowed from graphql.
-Just remember, that `query` is a request fired to get some data, while `mutation` is a request fired
-to cause some side effect, including data update. Or to think about it from different perspective,
-if you use REST, usually a query will be a `GET`, `HEAD`, `OPTIONS` request,
-and mutation will be a `POST`, `PUT`, `PATCH`, `DELETE` request. Of course, if you use
-graphql, no explanation is necessary.
+또 다른 중요한 점은 `요청`을 `쿼리`와 `뮤테이션`로 나눌 수 있다는 것입니다.
+이것은 이 라이브러리에서 사용되는 명명 규칙이며 graphql에서 빌 렸습니다.
+기억해라, `쿼리`는 일부 데이터를 얻기 위해 실행 된 요청이고, 반면에 `mutation`은 데이터 업데이트를 포함하여 부작용을 일으키는 요청입니다. 
+Or to think about it from different perspective,
+REST를 사용하는 경우 일반적으로 쿼리는`GET`,`HEAD`,`OPTIONS` 요청입니다.,
+뮤테이션은 `POST`,`PUT`,`PATCH`,`DELETE` 요청이 될 것입니다. 물론 graphql을 사용하면 설명이 필요하지 않습니다.
 
-Now, as naming convention is clarified, let's leave actions for now and focus on reducers.
-As shown in `Motivation` example, `handleRequests` returns ready to use `requestsReducer`,
-which manages all your remote state kept in one place. It does not mean that you cannot
-react on requests actions in your own reducers, but most of the time it won't be required.
+이제 명명 규칙이 명확 해짐에 따라 지금 액션은 내려놓고 리듀서에 초점을 맞추겠습니다.
+As shown in `Motivation` example, `handleRequests`는 모든 원격 상태를 한곳에서 관리하는 `requestsReducer`를 사용할 준비가되었습니다.
+그말은, 당신이 당신 자신이 만든 리듀서의 요청에 대해서 반응 할 수 없다는 것을 의미하지는 않습니다. 그리고 대부분 그럴 필요도 없습니다.
 
-So, the whole remote state is kept inside one reducer, as one big object attached to `requests` key
-in `state`. However, you should not read this state directly in your application, but you should use
-selectors provided by this library. Why? Because they are very optimized with the use of `reselect` already,
-plus state in requests reducer contains some information which should be treated as an internal implementation
-detail, not needed to be understood or used by users of this library. Selectors will be explained in a dedicated chapter,
-for now just know that there are selectors `getQuery`, `getMutation` as well as selector creators `getQuerySelector`
-and `getMutationSelector`.
+`state` 내부의 `request` 키에 첨부된 하나의 커다란 객체인 하나의 리듀서에 모든 원격 상태는 보관됩니다.
+그러나 애플리케이션에서이 상태를 직접 읽지 말고이 라이브러리에서 제공하는 셀렉터를 사용해야합니다. 왜? 이미 `reselect`를 사용하여 최적화되어 있기 때문입니다.
+더해서, 요청 리듀서의 상태에는 내부 구현 세부 사항으로 취급되어야하는 일부 정보가 포함됩니다.not needed to be understood or used by users of this library. 
+Selectors will be explained in a dedicated chapter,
+지금은 셀렉터 `getQuery`,`getMutation`뿐만 아니라 셀렉터 생성기`getQuerySelector` 및`getMutationSelector`가 있음을 알고 있습니다.
 
-Also, probably you noticed sagas. Actually you don't need to know or use sagas in your application! You only need to do
+또한 아마도 당신은 사가를 눈치챘겠지만. 실제로 응용 프로그램에서 sagas를 알거나 사용할 필요가 없습니다! You only need to do
 what is shown in `Motivation` part. However, this library is completely compatible with it, actually it uses sagas
 to power some of its functionalities. It might be possible though that one of the next releases will be rewritten to get rid
 of `redux-saga` dependency, it shouldn't change this library API, just know this as a curiosity.
 
 ## Actions [:arrow_up:](#table-of-content)
 
-As described above, the core in this library are requests actions. As a reminder, requests can be divided as
-queries and mutations. Let's give examples how to write such actions, assuming we use Axios driver.
-We will write one query and one mutation:
+위에서 설명한 것처럼이 라이브러리의 핵심은 액션입니다. 알림은 요청을 쿼리와 뮤테이션으로 나눌 수 있습니다. Axios 드라이버를 사용한다고 가정 할 때 이러한 동작을 작성하는 방법을 예를 들어 보겠습니다.
+우리는 하나의 쿼리와 하나의 뮤테이션을 쓸 것입니다:
 ```js
 // query
 const fetchBooks = () => ({
@@ -248,10 +233,9 @@ const deleteBook = id => ({
 });
 ```
 
-Now, what happens after one of the above actions is dispatched? Let's imagine we dispatch `DELETE_BOOK`
-action by `dispatch(deleteBook('1'))`. Because we use Axios, `axios.delete('/books/1')` will be fired.
-Then, after AJAX request is finished, either success, error or abort action will be dispatched. So,
-in our case, one of the below actions:
+이제 위의 작업 중 하나가 디스패치된 후 어떻게됩니까? `dispatch(deleteBook('1'))` 에 의해서 `DELETE_BOOK` 울 디스패치 한다고 상상합시다. 우리는 Axios를 사용하기 때문에, `axios.delete('/books/1')` 촉발 될 것이다.
+그런 다음 AJAX 요청이 완료된 후, 성공, 오류 또는 중단 조치가 디스패치됩니다. 
+따라서 우리의 경우 아래 작업 중 하나:
 ```js
 // success
 {
@@ -327,50 +311,37 @@ in our case, one of the below actions:
 }
 ```
 
-So, again, after you dispatch a request action, after request is finished, a response action
-will be dispatched. Depending on the result, `_SUCCESS`, `_ERROR` or `_ABORT` suffix will be added
-to request action type.
+따라서 요청 조치를 디스패치 한 후 요청이 완료된 후 응답 조치가 디스패치됩니다. 결과에 따라, `_SUCCESS`, `_ERROR` 혹은 `_ABORT`가 요청 액션 타입에 접미사로 추가됩니다.
 
 Now, you probably noticed `meta` key next to `request` in `DELETE_BOOK` action. What's that?
-While `request` is used to pass information to a driver you use (in our case Axios), `meta` is the place
-to pass some additional options, all of which will be explained later. In our case, there is `meta.mutations`.
-Like you probably guessed, this is the place where you can update a query data on mutation success - in our case
-we just filter available books so that we remove the one with id `'1'`. Another `meta` property is
-that any response action has additional `meta.requestAction` key which gives reference to the related request action.
-Also, notice that all meta keys from request action are added to response action to, that's why you see `meta.mutations`
-available in response actions too.
+`request`가 정보를 당신이 사용하는 드라이버(우리의 경우 Axios)에게 전달하는데 사용되는 반면에, `메타`는 몇 가지 추가 옵션을 전달할 수있는 곳입니다,
+all of which will be explained later. 우리의 경우에는 `meta.mutations`가 있습니다.
+아마 당신이 짐작했듯이, 이것은 뮤테이션 성공에 대한 쿼리 데이터를 업데이트 할 수있는 곳입니다- in our case
+사용 가능한 책을 필터링하여 ID가 `'1'`인 책을 제거합니다. 또 다른`meta` 특성은 모든 응답 조치에 관련 요청 조치에 대한 참조를 제공하는 추가`meta.requestAction` 키가 있다는 것입니다.
+또한 요청 액션의 모든 메타 키가 응답 액션에 추가됩니다., 그렇기 때문에 응답 액션에서도 `meta.mutations`를 사용할 수 있습니다..
 
 ### Meta options
 
-Now, let's talk about all options available in `meta`:
-- `getData: data => transformedData`: a function which is called on request success, which allows you to
-transform data received from server
-- `getError: error => transformedError`: a function which is called on request error, which allows you to
-transform error received from server
-- `asPromise: boolean`: `true` or `false`, which can be used to promisify request action, so that you could do
-`dispatch(fetchBooks()).then().catch()`, more details can be find in `middleware` chapter
-- `asMutation: boolean`: it can be used to force treating of a request action as mutation when `true` or query when `false`
-- `driver: string`: only if you use multiple drivers, more details in `multiple drivers` chapter
-- `takeLatest: boolean`: when `true`, if a request of a given type is pending and another one is fired, the first one will be
-automatically aborted, which can prevent race condition bugs and improve performance, default as `true` for queries and `false`
-for mutations, which is usually what you want
-- `abortOn: string | string[] | action => boolean`: for instance `'LOGOUT'`, `['LOGOUT']` or `action => action.type === 'LOGOUT'`,
-you can use it to automatically abort request
-- `requestKey: string` - by default it is assumed that you only need to store information once for a given request type,
-like its data, error or loading state, so that `fetchBook('2')` would override data for previous book, like with `id` `'1'`, you can
-change it behaviour with this property, like `requestKey: id`
-- `requestsCapacity: number` - use together with `requestKey`, it prevents memory leak, imagine you dispatch requests with 1000+
-different `requestKey`, passing `requestsCapacity: 2` would remove state for 1st request after 3rd is resolved and so on, so
-FIFO rule is applied here
-- `normalize: boolean` - automatically normalize `data` on response success, more information in `normalisation` chapter
-- `cache: boolean | number` - it can be used to cache queries, forever when `true` or for a number of seconds, more information
-in `middleware` chapter
-- `dependentRequestsNumber: number` - number of requests which will be fired after this one, only for SSR purposes, more information in `middleware` chapter
-- `isDependentRequest: boolean`: used together with `dependentRequestsNumber`, and similarly used for SSR
+이제`meta`에서 사용 가능한 모든 옵션에 대해 이야기 해 봅시다:
+- `getData: data => transformedData`: 요청 성공시 호출되는 함수, 서버에서받은 데이터를 변환 할 수 있습니다
+- `getError: error => transformedError`: 요청 오류시 호출되는 함수, 서버에서받은 오류를 변환 할 수 있습니다
+- `asPromise: boolean`: `true` or `false`, 요청 액션를 프로미스화 하는 데 사용할 수있는, 그래서 `dispatch(fetchBooks()).then().catch()` 해준다. 자세한 내용은 '미들웨어'장에서 찾을 수 있습니다
+- `asMutation: boolean`: `true` 일 때 요청 조치를 돌연변이로 강제 처리하는 데 사용할 수 있습니다. 또는 'false'일 때 쿼리
+- `driver: string`: 여러 드라이버를 사용하는 경우에만 '여러 드라이버'장에서 자세한 내용을 확인하십시오
+- `takeLatest: boolean`:'true'일 때, 주어진 유형의 요청이 보류 중이고 다른 유형의 요청이 발생하면 첫 번째 요청이 자동으로 중단되어 경쟁 조건 버그를 방지하고 성능을 향상시킬 수 있습니다. 기본적으로 쿼리의 경우 `true`, 돌연변이는 `false`.
+- `abortOn: string | string[] | action => boolean`: 예를 들면 `'LOGOUT'`, `['LOGOUT']` 혹은 `action => action.type === 'LOGOUT'`,  
+당신은 자동으로 요청을 중단하는 데 사용할 수 있습니다
+- `requestKey: string` - 기본적으로 주어진 요청 유형에 대해 정보를 한 번만 저장하면된다고 가정합니다.
+데이터, 오류 또는로드 상태와 같은, `fetchBook ( '2')`는 이전 책의 데이터를 무시합니다, like with `id` `'1'`,이 속성으로 동작을 변경할 수 있습니다, like `requestKey: id`
+- `requestsCapacity: number` - `requestKey`와 함께 사용, 메모리 누수 방지, 1000 개 이상의 다른`requestKey`로 요청을 발송한다고 상상해보십시오., `requestsCapacity : 2`를 전달하면 세 번째가 해결 된 후 첫 번째 요청의 상태가 제거됩니다., FIFO 규칙이 여기에 적용됩니다
+- `normalize: boolean` - 응답 성공시 '데이터'자동 정규화, '정규화'장의 자세한 정보
+- `cache: boolean | number` - 쿼리를 캐시하는 데 사용할 수 있습니다, 'true'일 때 영원히 또는 몇 초 동안 , 미들웨어 장에서 더 많은 정보
+- `dependentRequestsNumber: number` - 이 요청 이후에 실행될 요청 수, SSR 목적으로 만, 미들웨어 장에서 더 많은 정보
+- `isDependentRequest: boolean`: `dependentRequestsNumber`와 함께 사용, SSR에도 유사하게 사용됩니다.
 - `optimisticData`: an object which will be normalized on request as an optimistic update
 - `revertedData`: an object which will be normalized on response error so if optimistic update failed
-- `localData`: it can be attached to any action, even not request action, to normalize data without request
-- `mutations`: an object to update queries data, it will be explained below
+- `localData`: 그것은 어떤 행동에도 붙일 수 있습니다, 액션을 요청하지 않더라도, 요청 없이 데이터를 정규화 한다
+- `mutations`: 쿼리 데이터를 업데이트하는 개체는 아래에서 설명합니다.
 
 ### Mutations and data updates
 
