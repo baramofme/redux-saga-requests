@@ -11,8 +11,7 @@
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-Redux-Saga addon to simplify handling of AJAX requests. It supports Axios, Fetch API and GraphQL, but different
-integrations could be added, as they are implemented in a plugin fashion.
+AJAX 요청 처리를 단순화하는 Redux-Saga 애드온. Axios, Fetch API 및 GraphQL을 지원하지만 플러그인 방식으로 구현되므로 다른 통합을 추가 할 수 있습니다.
 
 ## Table of content
 
@@ -37,7 +36,7 @@ integrations could be added, as they are implemented in a plugin fashion.
 
 ## Motivation [:arrow_up:](#table-of-content)
 
-With `redux-saga-requests`, assuming you use `axios` you could refactor a code in the following way:
+`redux-saga-requests '에서`axios'를 사용한다고 가정하면 다음과 같은 방식으로 코드를 리팩터링 할 수 있습니다:
 ```diff
   import axios from 'axios';
 - import { takeEvery, put, call } from 'redux-saga/effects';
@@ -118,7 +117,7 @@ With `redux-saga-requests`, assuming you use `axios` you could refactor a code i
 `redux-saga-requests`를 사용하면, 더 이상 오류 처리 또는로드 스피너 표시와 같은 작업을 수행하기 위해 오류 및 성공 작업을 정의 할 필요가 없습니다. 
 반복적 인 사가 및 감속기와 관련된 요청을 작성할 필요도 없습니다. selector 작성에 대해 걱정할 필요조차 없습니다, 이 라이브러리는 최적화 된 선택기를 즉시 제공하므로.
 `redux-actions` 같은 액션 헬퍼 라이브러리를 쓰면, 상수를 쓸 필요조차 없습니다.!
-So basically you end up writing just actions to manage your whole remote state, so no more famous boilerplate in your Redux apps!
+따라서 기본적으로 전체 원격 상태를 관리하는 작업을 작성하므로 Redux 앱에서 더 이상 유명한 보일러플레이트가 없습니다!
 
 여기에서이 라이브러리가 제공하는 기능 목록을 볼 수 있습니다:
 - AJAX 요청을 `{ type: FETCH_BOOKS, request: { url: '/books' } }` 와 같이 간단한 액션으로 정의 가능, 그리고 `success`, `error` (`abort` 또한 지원됩니다, 아래를 참조하십시오) 액션은 자동으로 디스패치 됩니다
@@ -144,50 +143,48 @@ for the example)
 
 ## Installation [:arrow_up:](#table-of-content)
 
-To install the package, just run:
+패키지를 설치하려면 다음을 실행하십시오:
 ```
 $ npm install redux-saga-requests
 ```
-or you can just use CDN: `https://unpkg.com/redux-saga-requests`.
+또는 당신은 CDN을 사용할 수 있습니다: `https://unpkg.com/redux-saga-requests`.
 
-Also, you need to install a driver:
-- if you use Axios, install `axios` and `redux-saga-requests-axios`:
+또한 드라이버를 설치해야합니다:
+- Axios를 사용한다면`axios`와`redux-saga-requests-axios`를 설치하십시오:
 
   ```
   $ npm install axios redux-saga-requests-axios
   ```
   or CDN: `https://unpkg.com/redux-saga-requests-axios`.
-- if you use Fetch API, install `isomorphic-fetch` (or a different Fetch polyfill) and `redux-saga-requests-fetch`:
+- Fetch API를 사용하는 경우, install `isomorphic-fetch` (or a different Fetch polyfill) and `redux-saga-requests-fetch`:
 
   ```
   $ npm install isomorphic-fetch redux-saga-requests-fetch
   ```
   or CDN: `https://unpkg.com/redux-saga-requests-fetch`.
 
-Of course, because this is Redux-Saga addon, you also need to install `redux-saga`.
-Also, it requires to install `reselect`.
+물론 이것은 Redux-Saga 애드온이기 때문에`redux-saga`도 설치해야합니다.
+또한 '재 선택'을 설치해야합니다.
 
 ## Usage [:arrow_up:](#table-of-content)
 
-For a quick introduction how things work, see [Motivation](#motivation-arrow_up) paragraph.
+작동 방식에 대한 빠른 소개는 [동기 부여](#motivation-arrow_up) 단락을 참조하십시오.
 
-Before we go further, let's start with some naming conventions explanation and ideas behind this library.
+더 나아 가기 전에,이 라이브러리 뒤에있는 명명 규칙 설명과 아이디어로 시작해 봅시다.
 
-As you probably noticed in `Motivation` section, 사용 된 내용 일부 중 하나는 '요청'키가있는 동작입니다..
+아마도 '동기 부여'섹션에서 알 수 있듯이, 사용 된 내용 일부 중 하나는 '요청'키가있는 동작입니다..
 지금부터 요청을 액션이라합니다. 이러한 액션이 전달되면 AJAX 요청이 자동으로 시작됩니다. 그런 다음 결과에 따라 해당 성공, 오류 또는 중단 조치가 발송됩니다.
-다음 단락에서는 요청 조치에 대한 자세한 정보가 있습니다., but for now know, 그 요청 동작은 드라이버라고 불리는 것에 의해 구동됩니다. 
+다음 단락에서는 요청 조치에 대한 자세한 정보가 있습니다., 하지만 지금은, 그 요청 동작은 드라이버라고 불리는 것에 의해 구동됩니다. 
 당신은 `handleRequest` 기능에서 드라이버를 설정했습니다. 공식적으로 지원되는 Axios, Fetch API, GraphQL 및 모의 드라이버가 있습니다, 그러나 자신의 드라이버를 작성하는 것은 매우 쉽습니다.
-Just pick whatever you prefer. The key to understand is that if you know how to use Fetch API,
-you know how to use Fetch API driver. `fetch` 함수에 전달할 설정 객체가 있다면,
-이제 요청 액션의 `request` 키에 첨부합니다. Another information which will be explained later is that you can use `meta` key next to `request`, which is the way to pass some additional options.
-One of examples can be `meta.driver` option, which allows you to define driver per request action, that's it,
-you can use multiple drivers within one application. It will be described later, 지금은 핵심 개념에 집중하자.
+원하는 것을 골라주세요. 이해하는 열쇠는 Fetch API를 사용하는 방법을 알고 있다면, Fetch API 드라이버 사용법을 알고 있습니다. `fetch` 함수에 전달할 설정 객체가 있다면,
+이제 요청 액션의 `request` 키에 첨부합니다. 나중에 설명 할 또 다른 정보는`request` 옆에 `meta` 키를 사용할 수 있다는 것입니다, 이것은 몇 가지 추가 옵션을 전달하는 방법입니다.
+예제 중 하나는`meta.driver` 옵션 일 수 있습니다, 요청 액션 당 드라이버를 정의 할 수 있습니다., 그게 다야,
+하나의 응용 프로그램 내에서 여러 드라이버를 사용할 수 있습니다. 후술한다, 지금은 핵심 개념에 집중하자.
 
 또 다른 중요한 점은 `요청`을 `쿼리`와 `뮤테이션`로 나눌 수 있다는 것입니다.
 이것은 이 라이브러리에서 사용되는 명명 규칙이며 graphql에서 빌 렸습니다.
 기억해라, `쿼리`는 일부 데이터를 얻기 위해 실행 된 요청이고, 반면에 `mutation`은 데이터 업데이트를 포함하여 부작용을 일으키는 요청입니다. 
-Or to think about it from different perspective,
-REST를 사용하는 경우 일반적으로 쿼리는`GET`,`HEAD`,`OPTIONS` 요청입니다.,
+아니면 다른 관점에서 생각할 수도 있습니다, REST를 사용하는 경우 일반적으로 쿼리는`GET`,`HEAD`,`OPTIONS` 요청입니다.,
 뮤테이션은 `POST`,`PUT`,`PATCH`,`DELETE` 요청이 될 것입니다. 물론 graphql을 사용하면 설명이 필요하지 않습니다.
 
 이제 명명 규칙이 명확 해짐에 따라 지금 액션은 내려놓고 리듀서에 초점을 맞추겠습니다.
@@ -201,9 +198,8 @@ Selectors will be explained in a dedicated chapter,
 지금은 셀렉터 `getQuery`,`getMutation`뿐만 아니라 셀렉터 생성기`getQuerySelector` 및`getMutationSelector`가 있음을 알고 있습니다.
 
 또한 아마도 당신은 사가를 눈치챘겠지만. 실제로 응용 프로그램에서 sagas를 알거나 사용할 필요가 없습니다! You only need to do
-what is shown in `Motivation` part. However, this library is completely compatible with it, actually it uses sagas
-to power some of its functionalities. It might be possible though that one of the next releases will be rewritten to get rid
-of `redux-saga` dependency, it shouldn't change this library API, just know this as a curiosity.
+what is shown in `Motivation` part. 그러나 이 라이브러리는 완전히 호환 가능합니다. 실제로 sagas를 사용하여 일부 기능을 강화합니다. 
+다음 릴리스 중 하나가 'redux-saga'의존성을 제거하기 위해 다시 작성 될 수 있지만 이 라이브러리 API를 변경해서는 안되며 호기심으로 알고 있어야합니다.
 
 ## Actions [:arrow_up:](#table-of-content)
 
@@ -345,43 +341,41 @@ all of which will be explained later. 우리의 경우에는 `meta.mutations`가
 
 ### Mutations and data updates
 
-Like you probably remember, mutations are requests to cause a side effect, in the contracts to queries which
-are used to get data. But how to update data received from queries? We usually do such things in reducers, but with this library
-we have another way - `meta.mutations`.
+아시다시피, 돌연변이는 데이터를 얻는 데 사용되는 쿼리 계약에서 사이드 이펙트를 일으키는 요청입니다. 
+그러나 쿼리에서 수신 한 데이터를 업데이트하는 방법? 우리는 보통 리듀서에서 그런 일을하지만이 라이브러리를 사용하면 다른 방법 인 'meta.mutations'가 있습니다.
 
-As you saw in `DELETE_BOOK` mutation, there was declared `meta.mutations` object as:
+`DELETE_BOOK` 돌연변이에서 보았 듯이`meta.mutations` 객체는 다음과 같이 선언되었습니다:
 ```js
 mutations: {
   FETCH_BOOKS: data => data.filter(book => book.id !== '1'),
 }
 ```
 
-Above function will be called on `DELETE_BOOK` success with `data` which is current state of `FETCH_BOOKS` query.
-Whatever it returns will be used by reducer responsible for `FETCH_BOOKS` to update data.
+위 함수는 'FETCH_BOOKS'쿼리의 현재 상태 인 'data'로 'DELETE_BOOK'성공시 호출됩니다.
 
-Of course, one mutation action can update multiple queries, just add another key.
+반환되는 것은 무엇이든 데이터를 업데이트하기 위해 'FETCH_BOOKS'를 담당하는 리듀서에 사용합니다.
 
-If you need to have access to data response from mutation action itself, like information about deleted book and so on,
-you can access it from passed second argument - that's it, this function actually has signature `(data, mutationData) => updatedData`.
+물론 하나의 돌연변이 동작으로 여러 쿼리를 업데이트 할 수 있습니다. 다른 키만 추가하면됩니다..
+
+삭제 된 책 등에 대한 정보와 같은 돌연변이 액션 자체에서 데이터 응답에 액세스해야하는 경우 전달 된 두 번째 인수에서 액세스 할 수 있습니다. 
+- 즉,이 함수에는 실제로 서명 `(data, mutationData) => updatedData`가 있습니다.
 
 ### Updating data of queries with requestType
 
-Now, what if you want to update a data of a query with a `requestKey`? Just add `requestKey`
-to queryType, for example:
+이제 `requestKey`로 쿼리 데이터를 업데이트하려면 어떻게해야합니까? `queryType`에`requestKey`를 추가하십시오.:
 ```js
 mutations: {
   [FETCH_BOOK_DETAIL + id]: data => data.id === id ? null : data,
 }
 ```
 
-Assuming we have a query action with `type: FETCH_BOOK_DETAIL` and `meta.requestKey: id`,
-as you can see we just append `id` to `FETCH_BOOK_DETAIL`. The update function just returns `null`
-when id is matched or data in another case, typically what you would do in a reducer.
+`type : FETCH_BOOK_DETAIL` 및`meta.requestKey : id`의 쿼리 작업이 있다고 가정합니다.,
+보시다시피`id`를`FETCH_BOOK_DETAIL`에 추가하면됩니다. 업데이트 함수는 id가 일치하거나 다른 경우에 데이터가 있으면 `null`을 반환합니다., typically what you would do in a reducer.
 
 ### Local updates
 
-You can also update your queries data locally, without even making any mutation request.
-How? Just attach `meta.mutations` to any action, like this:
+뮤테이션 요청을하지 않고도 쿼리 데이터를 로컬로 업데이트 할 수도 있습니다.
+어떻게? 'meta.mutations'를 다음과 같은 액션에 첨부하십시오.:
 ```js
 const deleteBookLocally = id => ({
   type: 'DELETE_BOOK_LOCALLY',
@@ -393,16 +387,15 @@ const deleteBookLocally = id => ({
   },
 });
 ```
-As you can see, data mutation can be defined also as object with `updateData` key, which is the same
-as using update function directly. But with object we can pass some extra options, here we use
-`local: true` to tell the library we want to use local mutation.
+보시다시피, 데이터 업데이트는 update 함수를 직접 사용하는 것과 동일한`updateData` 키를 사용하여 객체로 정의 할 수도 있습니다.
+그러나 객체를 사용하면 몇 가지 추가 옵션을 전달할 수 있습니다. 여기서 로컬 변수를 사용하려는 라이브러리에 알리기 위해 'local : true'를 사용합니다.
 
 ### Optimistic updates
 
-Sometimes you don't want to wait for a mutation response to update your data, sometimes you want to update it at once.
-At the same time you want to have a way to revert data update if actually mutation request failed.
-This is so called optimistic update and object notation is useful for that too, like for local mutations.
-Here is example:
+때로는 데이터를 업데이트하기 위해 돌연변이 응답을 기다리지 않고 때로는 한번에 업데이트하기를 원할 수도 있습니다.
+그 때 실제로 돌연변이 요청이 실패한 경우 데이터 업데이트를 되돌릴 수있는 방법을 원합니다.
+이것을 소위 낙관적 업데이트라고하며 객체 표기법은 지역 뮤테이션이과 같이 유용합니다..
+여기에 예가 있습니다:
 ```js
 const deleteBookOptimistic = book => ({
   type: 'DELETE_BOOK_OPTIMISTIC',
@@ -421,16 +414,16 @@ const deleteBookOptimistic = book => ({
 });
 ```
 
-So, above we have a mutation action with optimistic update for `FETCH_BOOKS` query.
-`updateDataOptimistic` is called right away after `DELETE_BOOK_OPTIMISTIC` action is dispatched,
-so not on success like in case for `updateData`, while `revertData` is called on `DELETE_BOOK_OPTIMISTIC_ERROR`,
-so you can amend the data and revert deletion in case of an unpredicted error.
-At the very same time you can still use `updateData` to further update data on `DELETE_BOOK_OPTIMISTIC_SUCCESS`.
+따라서 위의 FETCH_BOOKS 쿼리에 대한 낙관적 업데이트로 돌연변이 동작이 있습니다..
+`DELETE_BOOK_OPTIMISTIC` 액션이 디스패치 된 직후 'updateDataOptimistic'이 호출됩니다.,
+`updateData`의 경우와 같이 성공하지 못하면 `revertData`는`DELETE_BOOK_OPTIMISTIC_ERROR`에서 호출됩니다.
+예기치 않은 오류 발생시 데이터를 수정하고 삭제를 되돌릴 수 있습니다..
+동시에`updateData`를 사용하여`DELETE_BOOK_OPTIMISTIC_SUCCESS`의 데이터를 추가로 업데이트 할 수 있습니다.
 
 ### resetRequests
 
-Sometimes you might need to clear data and errors of your requests, including both queries and mutations.
-You can use `resetRequests` action to do it. For example:
+때로는 쿼리와 뮤테이션을 포함하여 요청의 데이터와 오류를 지워야 할 수도 있습니다.
+`resetRequests` 액션을 사용하면됩니다. 예를 들면 다음과 같습니다:
 ```js
 import { resetRequests } from 'redux-saga-requests';
 
@@ -443,16 +436,17 @@ dispatch(resetRequests([FETCH_BOOKS, { requestType: FETCH_BOOK, requestKey: '1' 
 
 ## Selectors [:arrow_up:](#table-of-content)
 
-While it is possible to get a remote state on your own, it is recommented to use below selectors.
-For one thing, they are already optimized, reusing cache and clearing it when necessary. Another reason is
-that they return only information needed by applications, while state kept in `requestsReducer` contains
-more data required by the library itself. Not to mention a situation when you use automatic normalisation.
-Data in reducer is kept normalized, while you need it denormalized in your apps. Selectors already know how to denormalize it automatically and quickly, so that you don't even need to worry about it.
+스스로 원격 상태를 얻을 수는 있지만 아래 선택기를 사용하는 것이 좋습니다.
+우선 캐시를 재사용하고 필요한 경우 캐시를 정리하여 이미 최적화되어 있습니다. 
+또 다른 이유는 애플리케이션에 필요한 정보 만 반환하고 'requestsReducer'에 보관 된 상태에는 라이브러리 자체에 필요한 더 많은 데이터가 포함되어 있기 때문입니다. 
+자동 정규화를 사용할 때의 상황은 말할 것도 없습니다.
+리듀서의 데이터는 정규화 된 상태로 유지되지만 앱에서는 비정규 화 된 상태가 필요합니다. 
+선택기는 이미 자동으로 빠르게 비정규 화하는 방법을 알고 있으므로 걱정할 필요가 없습니다.
 
 ### getQuery
 
-`getQuery` is a selector which returns a state for a given query. It is the selector which requires props.
-Imagine you want to get a state for `FETCH_BOOKS` query which we played with earlier. You can use it like this:
+`getQuery`는 주어진 쿼리에 대한 상태를 반환하는 선택기입니다. props 가 필요한 셀렉터입니다.
+이전에 사용한 FETCH_BOOKS 쿼리의 상태를 얻고 싶다고 상상해보십시오. 이렇게 사용할 수 있습니다:
 ```js
 import { getQuery } from 'redux-saga-requests';
 
@@ -464,8 +458,8 @@ const booksQuery = getQuery(state, { type: 'FETCH_BOOKS' });
 } */
 ```
 
-If you are an experienced Redux developer, you might be worried about memoization of `getQuery`.
-Fear not! You can call it with different props and memoization is not lost, for example:
+숙련 된 Redux 개발자라면`getQuery`의 메모이제이션이 걱정 될 수 있습니다.
+두려워 말라! 다른 props로 호출 할 수 있으며 메모이제이션이 손실되지 않습니다.:
 ```js
 const booksQuery = getQuery(state, { type: 'FETCH_BOOKS' });
 getQuery(state, { type: 'FETCH_STH_ELSE' });
@@ -473,25 +467,24 @@ booksQuery === getQuery(state, { type: 'FETCH_BOOKS' })
 // returns true (unless state for FETCH_BOOKS query really changed in the meantime)
 ```
 
-We only provided example for `type` prop, but here you have the list of all possibilities:
-- `type: string`: just pass query action type or action itself when using action creator library
-- `requestKey: string`: use it if you used `meta.requestKey` in query action
-- `multiple`: set to `true` if you prefer `data` to be `[]` instead of `null` if data is empty, `false` by default
-- `defaultData`: use it to represent `data` as an orbitrary object instead of `null`, use top level object though,
-not recreate it multiple times not to break selector memoization
+우리는`type` prop에 대한 예제만을 제공했습니다, 그러나 여기에 모든 가능성의 목록이 있습니다:
+- `type: string`: action creator 라이브러리를 사용할 때 쿼리 액션 유형 또는 액션 자체를 전달하십시오.
+- `requestKey: string`: 쿼리 동작에서`meta.requestKey`를 사용한 경우 사용하십시오
+- `multiple`: 데이터가 비어있는 경우`data`를 `null` 대신`[]`로 설정하려면`true`로 설정하십시오., 기본적으로`false`
+- `defaultData`: `null` 대신 'data'를 임의의 객체로 나타내는 데 사용하십시오., 그래도 최상위 객체를 사용하십시오.,
+ 셀렉터 메모이제이션을 중단하지 않도록 여러 번 다시 만들지 마십시오.
 
 ### getQuerySelector
 
-It is almost the same as `getQuery`, the difference is that `getQuery` is the selector,
-while `getQuerySelector` is the selector creator - it just returns `getQuery`.
+`getQuery`와 거의 동일하다, 차이점은 `getQuery`가 셀렉터라는 것입니다.,
+`getQuerySelector`는 셀렉터 생성자입니다. - `getQuery` 만 반환합니다.
 
-It is helpful when you need to provide a selector without props somewhere (like in `useSelector` React hook).
-So instead of doing `useSelector(state => getQuery(state, { type: 'FETCH_BOOKS' }))`
-you could just `useSelector(getQuerySelector({ type: 'FETCH_BOOKS' }))`.
+어딘가에 props없이 셀렉터를 제공해야 할 때 유용합니다 (`useSelector` React hook에서와 같이).
+따라서`useSelector (state => getQuery (state, {type : 'FETCH_BOOKS'}))`대신`useSelector (getQuerySelector ({type : 'FETCH_BOOKS'}))`만하면됩니다.
 
 ### getMutation
 
-Almost the same as `getQuery`, it is just used for mutations:
+`getQuery`와 거의 동일하며 뮤테이션에만 사용됩니다.
 ```js
 import { getMutation } from 'redux-saga-requests';
 
@@ -502,17 +495,16 @@ const deleteBookMutation = getMutation(state, { type: 'DELETE_BOOK' });
 } */
 ```
 
-It accept `type` and optionally `requestKey` props, which work like for queries.
+쿼리처럼 `type`과 선택적으로`requestKey` props을 받아들입니다.
 
 ### getMutationSelector
 
-Like `getQuerySelector`, it just returns `getMutation` selector.
+`getQuerySelector`와 마찬가지로 `getMutation` 셀렉터를 반환합니다.
 
 ## Reducers [:arrow_up:](#table-of-content)
 
-You won't need to write reducers to manage remote state, because this is done already by `requestsReducer`
-returned by `handleRequests`. If you need some extra state attached to queries and mutations, it is much better
-just to do it on selectors level, for instance imagine you want to add a property to books:
+`handleRequests`에 의해 리턴 된`requestsReducer`에 의해 이미 수행되기 때문에 원격 상태를 관리하기 위해 리듀서를 작성할 필요가 없습니다.
+쿼리 및 돌연변이에 추가 상태가 필요한 경우 셀렉터 수준에서 수행하는 것이 훨씬 좋습니다., 예를 들어 책에 속성을 추가한다고 가정합니다:
 ```js
 import { createSelector } from 'reselect';
 import { getQuerySelector } from 'redux-saga-requests;
@@ -525,10 +517,9 @@ const bookQuerySelector = createSelector(
   }),
 );
 ```
-Otherwise you would duplicate books state which is a very bad practice.
+위처럼 하지 않으면 책 상태를 복제해야 되며, 이는 매우 나쁜 습관입니다.
 
-It is totally fine though to react on requests and responses actions in your reducers
-managing a local state, for example:
+로컬 상태를 관리하는 리듀서의 요청 및 응답 액션에 반응하는 것이 좋습니다., 예를 들면:
 ```js
 import { success, error, abort } from 'redux-saga-requests';
 
@@ -550,17 +541,15 @@ const localReducer = (state, action) => {
 };
 ```
 
-Notice `success`, `error` and `abort` helpers, they just add proper suffixes to
-request actions for convenience, so in our case they return `FETCH_BOOKS_SUCCESS`,
-`FETCH_BOOKS_ERROR` and `FETCH_BOOKS_ABORT` respectively.
+'성공', '오류'및 '취소'도우미에 주목하십시오. 편의를 위해 조치를 요청하기 위해 적절한 접미사 만 추가하면됩니다., 
+따라서이 경우에는 각각 'FETCH_BOOKS_SUCCESS', 'FETCH_BOOKS_ERROR'및`FETCH_BOOKS_ABORT '를 반환합니다.
 
 ## Middleware [:arrow_up:](#table-of-content)
 
-Some options passed to `handleRequests` will cause it to return an additional key - `requestsMiddleware`.
-Those options are `promisify`, `cache` and `ssr`, all of which can be used independently in any
-combination. All you need to do is to add `requestsMiddleware` to your middleware list, before
-saga middleware. So, assuming you want to use all requests middleware (explained below), you would
-adjust your code from `Motivation` like that:
+`handleRequests`에 전달 된 일부 옵션은 추가 키인`requestsMiddleware`를 반환합니다.
+이러한 옵션은`promisify`,`cache` 및`ssr`입니다., 이들 모두는 임의의 조합으로 독립적으로 사용될 수있다.
+단지, 미들웨어 목록 중, 사가 미들웨어 이전에 `requestsMiddleware` 를 추가하면 됩니다. 
+따라서 모든 요청 미들웨어 (아래 설명)를 사용한다고 가정하면 다음과 같이 `Modivation`에서 코드를 조정합니다.
 ```js
 const configureStore = () => {
   const { requestsReducer, requestsSagas, requestsMiddleware } = handleRequests({
@@ -593,12 +582,11 @@ const configureStore = () => {
 
 ### Promise middleware
 
-What if you dispatch a request action somewhere and you would like to get a response in the same place?
-Dispatching action by default just returns the dispatched action itself, but you can change this behaviour
-by using promise middleware. All you need to is passing `promisify: true` to `handleRequests`,
-which will include promise middleware in `requestsMiddleware`.
+어딘가에 요청 액션을 전달하고 동일한 위치에서 응답을 받으려면 어떻게해야합니까?
+기본적으로 액션 디스패치 행위는 작업 자체를 반환합니다., promise 미들웨어를 사용하여이 동작을 변경할 수 있습니다. 
+`promisify : true`를`handleRequests '로 전달하면`requestsMiddleware`에 promise 미들웨어가 포함됩니다.
 
-Now, you just need to add `asPromise: true` to request action meta like that:
+이제 액션 메타를 요청하려면`asPromise : true`를 추가하면됩니다.:
 ```js
 const fetchBooks = () => ({
   type: FETCH_BOOKS,
@@ -609,7 +597,7 @@ const fetchBooks = () => ({
 });
 ```
 
-Then you can dispatch the action for example from a component and wait for a response:
+그런 다음 예를 들어 컴포넌트에서 액션을 디스패치하고 응답을 기다릴 수 있습니다.:
 ```js
 class Books extends Component {
   fetch = () => {
@@ -626,16 +614,14 @@ class Books extends Component {
 }
 ```
 
-Also, you can pass an optional `autoPromisify: true` flag to `handleRequests`, which will just
-promisify all requests - so no need to use `meta.asPromise: true` anymore.
+또한 선택적인`autoPromisify : true` 플래그를`handleRequests`에 전달하면 모든 요청을 promise화 할 수 있습니다. - 더 이상`meta.asPromise : true`를 사용할 필요가 없습니다..
 
 ### Cache middleware
 
-Sometimes you might want your responses to be cached for an amount of time or even forever (until the page is not reloaded at least).
-Or, putting it another way, you would like to send a given request no more often than once for an amount of time. You can easily
-achieve it with an optional cache middleware, just pass `cache: true` to `handleRequests`.
+때로는 응답을 일정 시간 동안 또는 영원히 캐시하기를 원할 수도 있습니다 (최소한 페이지가 다시로드 될 때까지).
+또는 다른 방법으로, 주어진 요청을 일정 시간 동안 한 번만 보내려고합니다. 선택적인 캐시 미들웨어로 쉽게 달성 할 수 있습니다.`cache : true`를`handleRequests`에 전달하면됩니다.
 
-After this, you can use `meta.cache`:
+그런 다음`meta.cache`를 사용할 수 있습니다:
 ```js
 const fetchBooks = () => ({
   type: FETCH_BOOKS,
@@ -646,11 +632,11 @@ const fetchBooks = () => ({
 });
 ```
 
-What will happen now, is that after a succesfull book fetch (to be specific after `FETCH_BOOKS_SUCCESS` is dispatched),
-any `FETCH_BOOKS` actions for `10` seconds won't trigger any AJAX calls and the following `FETCH_BOOKS_SUCCESS` will contain
-cached previous server response. You could also use `cache: true` to cache forever.
+이제 일어날 성공적인 책 가져 오기 ( `FETCH_BOOKS_SUCCESS`가 전달 된 후 특정) 후 '10'초 동안 `FETCH_BOOKS` 동작이 AJAX 호출을 트리거하지 않으며 다음 `FETCH_BOOKS_SUCCESS` 에 캐시 된 내용이 포함됩니다. 이전 서버 응답. 
+`cache : true`를 사용하여 영원히 캐싱 할 수도 있습니다.
 
-Another use case is that you might want to keep a separate cache for the same request action based on a cache key. For example:
+
+다른 유스 케이스는 캐시 키를 기반으로 동일한 요청 조치에 대해 별도의 캐시를 유지하려는 경우입니다. 예를 들어:
 ```js
 const fetchBook = id => ({
   type: FETCH_BOOK,
@@ -658,11 +644,11 @@ const fetchBook = id => ({
   meta: {
     cache: true,
     requestKey: id,
-    requestsCapacity: 2 // optional, to clear old cache exceeding this number
+    requestsCapacity: 2 // 선택 사항,이 수를 초과하는 오래된 캐시를 지우려면
   },
 });
 
-/* then, you will achieve the following behaviour:
+/* 다음과 같은 동작을 달성합니다:
 - GET /books/1 - make request, cache /books/1
 - GET /books/1 - cache hit
 - GET /books/2 - make request, /books/2
@@ -673,7 +659,7 @@ const fetchBook = id => ({
 */
 ```
 
-If you need to clear the cache manually for some reason, you can use `clearRequestsCache` action:
+어떤 이유로 캐시를 수동으로 지워야한다면`clearRequestsCache` 액션을 사용할 수 있습니다:
 ```js
 import { clearRequestsCache } from 'redux-saga-requests';
 
@@ -682,36 +668,32 @@ dispatch(clearRequestsCache(FETCH_BOOKS)) // clear only FETCH_BOOKS cache
 dispatch(clearRequestsCache(FETCH_BOOKS, FETCH_AUTHORS)) // clear only FETCH_BOOKS and FETCH_AUTHORS cache
 ```
 
-Note however, that `clearRequestsCache` won't remove any query state, it will just remove cache timeout so that
-the next time a request of a given type is dispatched, AJAX request will hit your server.
-So it is like cache invalidation operation.
+그러나 'clearRequestsCache'는 쿼리 상태를 제거하지 않습니다., 단지 캐시 만료만 지웁니다 그래서 다음번에 주어진 요청 타입이 디스패치될 때, AJAX 요청이 서버에 닿습니다.
+따라서 캐시 무효화 작업과 같습니다.
 
-Also, cache is compatible with SSR by default, so if you dispatch a request action with meta cache
-on your server, this information will be passed to client inside state.
+또한 캐시는 기본적으로 SSR과 호환됩니다., 서버에서 메타 캐시와 함께 요청 액션을 전달하면, 이 정보는 클라이언트 내부 상태로 전달됩니다.
 
 ### Server side rendering middleware
 
-Server side rendering is a very complex topic and there are many ways how to go about it.
-Many people use the strategy around React components, for instance they attach static methods to components which
-make requests and return promises with responses, then they wrap them in `Promise.all`. I don't recommend this strategy
-when using Redux, because this requires additional code and potentially double rendering on server, but if you really want
-to do it, it is possible thanks to promise middleware.
+서버 측 렌더링은 매우 복잡한 주제이며 이를 해결하는 방법에는 여러 가지가 있습니다..
+많은 사람들이 React 컴포넌트를 중심으로 전략을 사용합니다, 예를 들어 응답을 통해 요청을하고 프로미스를 반환하는 컴포넌트 요소에 정적 메서드를 연결합니다.
+, 그런 다음`Promise.all`로 감쌉니다. Redux를 사용할 때이 전략을 권장하지 않습니다, 서버에 추가 코드와 이중 렌더링이 필요할 수 도 있기 때문입니다, 하지만 정말로하고 싶다면 프로미스 미들웨어로 가능합니다.
 
-However, I recommend using another approach. See [server-side-rendering-example](https://github.com/klis87/redux-saga-requests/tree/master/examples/server-side-rendering) with the complete setup, but in a nutshell you can write universal code like you would
+그러나 다른 접근법을 사용하는 것이 좋습니다.. See [server-side-rendering-example](https://github.com/klis87/redux-saga-requests/tree/master/examples/server-side-rendering) with the complete setup, but in a nutshell you can write universal code like you would
 normally write it without SSR, with just only minor additions. Here is how:
 
-1. Before we begin, be advised that this strategy requires to dispatch requests on Redux level, at least those which have to be
-fired on application load. So for instance you cannot dispatch them inside `componentDidMount`. The obvious place to dispatch them
-is in your sagas, like `yield put(fetchBooks())`. However, what if your app has multiple routes, and each route has to send
-different requests? Well, you need to make Redux aware of current route. I recommend to use a router with first class support for
-Redux, namely [redux-first-router](https://github.com/faceyspacey/redux-first-router). If you use `react-router` though, it is
-fine too, you just need to integrate it with Redux with
-[connected-react-router](https://github.com/supasate/connected-react-router). Then, you can use `take` effect to listen to
-routes changes and/or get current location with `select` effect. This would give you information which route is active to know
-which requests to dispatch.
-2. On the server you need to pass `ssr: 'server'` (`ssr: 'client'` on the client, more in next step)
-option to `handleRequests`, which will include SSR middleware in `requestsMiddleware` and additionally return
-`requestsPromise` which will be resolved once all requests are finished. Here you can see a possible implementation:
+1. 시작하기 전에, 이 전략은 Redux 수준에서 요청을 발송해야 함을 확실히 합니다, 최소한 응용 프로그램로드에서 실행되어야하는 것들은 말이죠. 
+예를 들어`componentDidMount` 안에서 디스패치 할 수 없습니다. 그것들을 디스패치 할 명백한 장소는`yield put (fetchBooks ())`와 같은 당신의 sagas에 있습니다. 
+그러나 앱에 여러 경로가 있고 각 경로가 다른 요청을 보내야하는 경우에는 어떻게됩니까? 글쎄, 당신은 Redux가 현재 경로를 인식하도록해야합니다. 
+Redux에 대한 일류 지원 라우터를 사용하는 것이 좋습니다, 즉 [redux-first-router](https://github.com/faceyspacey/redux-first-router). 
+그래도`react-router`를 사용하면 괜찮습니다., [connected-react-router](https://github.com/supasate/connected-react-router)를 사용하여 Redux와 통합하면됩니다.
+그런 다음`take` 이펙트를 사용하여 경로 변경을 듣고`select` 이펙트로 현재 위치를 얻을 수 있습니다. 
+이것은 어떤 요청이 디스패치되는 지 알기 위해 어떤 경로가 활성화되어 있는지에 대한 정보를 제공합니다.
+
+2. 서버에서, `handleRequests`에 `ssr: 'server'` (`ssr: 'client'` 는 클라이언트에서, 다음 스텝에 설명) 옵션을 넣습니다 , 
+여기에는`requestsMiddleware`에 SSR 미들웨어가 포함되며, 추가로 모든 요청이 완료되면 해결되는 `requestsPromise`가 반환됩니다,  
+
+여기서 가능한 구현을 볼 수 있습니다:
     ```js
     import { createStore, applyMiddleware, combineReducers } from 'redux';
     import createSagaMiddleware from 'redux-saga';
@@ -791,36 +773,36 @@ option to `handleRequests`, which will include SSR middleware in `requestsMiddle
         res.status(400).send('something went wrong');
       });
     ```
-    As you can see, compared to what you would normally do in SSR for redux app, you only need to
-    pass the extra `ssr` option to `handleRequests` and wait for `requestsPromise` to be resolved.
+보시다시피, redux 앱을 위해 SSR에서 일반적으로 수행하는 것과 비교하여 추가`ssr` 옵션을`handleRequests '에 전달하고`requestsPromise`가 해결 될 때까지 기다려야합니다..
 
-    But how does it work? The logic is based on an internal counter. Initially it is set to `0` and is
-    increased by `1` after each request is initialized. Then, after each response it is decreased by `1`. So, initially after a first
-    request it gets positive and after all requests are finished, its value is again set back to `0`. And this is the moment
-    which means that all requests are finished and `requestsPromise` is resolved (with all success actions).
-    Additionally a special `redux-saga` `END` action is dispatched to stop all of sagas.
+그러나 어떻게 작동합니까? 논리는 내부 카운터를 기반으로합니다.. 초기에는 `0`으로 설정되며 각 요청이 초기화 된 후 `1`씩 증가합니다. 
+그런 다음 각 응답 후`1` 씩 감소합니다. 
+따라서 첫 번째 요청 후 처음에는 양수가 되고 모든 요청이 완료된 후에는 값이 다시 '0'으로 다시 설정됩니다.
+그리고 이때가 모든 요청이 완료되고 'requestsPromise'가 리졸브됩니다 (모든 성공 액션 포함).
+또한 특별한 `redux-saga` `END` 액션이 모든 사가를 막기 위해 전달됩니다.
 
-    In case of any request error, `requestsPromise` will be rejected with response error action.
+요청 오류가 발생하면 응답 오류 조치와 함께 'requestsPromise'가 거부됩니다..
 
-    There is also more complex case. Imagine you have a request `x`, after which you would like to dispatch
-    another `y`. You cannot do it immediately because `y` requires some information from `x` response.
-    Above algorythm would not wait for `y` to be finished, because on `x` response counter would be
-    already reset to `0`. There are two `action.meta` attributes to help here:
-    - `dependentRequestsNumber` - a positive integer, a number of requests which will be fired after this one,
-    in above example we would put `dependentRequestsNumber: 1` to `x` action, because only `y` depends on `x`
-    - `isDependentRequest` - mark a request as `isDependentRequest: true` when it depends on another request,
-    in our example we would put `isDependentRequest: true` to `y`, because it depends on `x`
+더 복잡한 경우도 있습니다. `x`라는 요청이 있고 다른`y`를 디스패치하고 싶다고 상상해보십시오. 
+`y`에는`x` 응답의 정보가 필요하기 때문에 즉시 할 수 없습니다.
+위의 알고리즘은 `x`응답 카운터가 이미 `0`으로 재설정되기 때문에 `y`가 완료 될 때까지 기다리지 않습니다. 
+여기에 도움이되는 두 가지`action.meta` 속성이 있습니다:
+- `dependentRequestsNumber` - 양의 정수,이 요청 이후에 발생하는 많은 요청,
+위의 예에서`y`만이`x`에 의존하기 때문에`dependentRequestsNumber : 1`을`x` 액션에 넣습니다.
+- `isDependentRequest` - 다른 요청에 따라 요청을 `isDependentRequest : true`로 표시
+이 예에서는`x`에 의존하기 때문에 `isDependentRequest : true`를`y`에 넣습니다
 
-    You could even have a more complicated situation, in which you would need to dispatch `z` after `y`. Then
-    you would also add `dependentRequestsNumber: 1` to `y` and `isDependentRequest: true` to `z`. Yes, a request
-    can have both of those attibutes at the same time! Anyway, how does it work? Easy, just a request with
-    `dependentRequestsNumber: 2` would increase counter by `3` on request and decrease by `1` on response,
-    while an action with `isDependentRequest: true` would increase counter on request by `1` as usual but decrease
-    it on response by `2`. So, the counter will be reset to `0` after all requests are finished, also dependent ones.
+You could even have a more complicated situation, in which you would need to dispatch `z` after `y`. 
+Then you would also add `dependentRequestsNumber: 1` to `y` and `isDependentRequest: true` to `z`. 
+Yes, a request can have both of those attibutes at the same time! 
+Anyway, how does it work? Easy, just a request with `dependentRequestsNumber: 2` would increase counter by `3` on request and decrease by `1` on response,
+while an action with `isDependentRequest: true` would increase counter on request by `1` as usual but decrease it on response by `2`. 
+So, the counter will be reset to `0` after all requests are finished, also dependent ones.
 
-3. The last thing you need to do is to pass `ssr: 'client` to `handleRequests`, like you noticed in previous step on the client side, What does it do? Well, it will ignore request actions which match
-those already dispatched during SSR. Why? Because otherwise with universal code the same job done on the server
-would be repeated on the client.
+3. The last thing you need to do is to pass `ssr: 'client` to `handleRequests`,
+like you noticed in previous step on the client side, What does it do? 
+Well, it will ignore request actions which match those already dispatched during SSR. 
+Why? Because otherwise with universal code the same job done on the server would be repeated on the client.
 
 ## handleRequests [:arrow_up:](#table-of-content)
 
@@ -1312,7 +1294,7 @@ const likeBooks = ids => ({
 
 ## React bindings [:arrow_up:](#table-of-content)
 
-Just install `redux-saga-requests-react`. See
+`redux-saga-requests-react`를 설치하십시오. See
 [docs](https://github.com/klis87/redux-saga-requests/tree/master/packages/redux-saga-requests-react)
 for more info.
 
